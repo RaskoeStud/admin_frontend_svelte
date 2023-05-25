@@ -5,45 +5,53 @@
     let passwordTest;
 
     async function handleSubmit() {
+
         let firstname = document.getElementById("firstname").value;
         let lastname = document.getElementById("lastname").value;
         let age = document.getElementById("age").value;
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
 
-        axios({
-            url: 'https://dls-admin-backend.azurewebsites.net/customers/',
-            method: 'post',
-            headers: {
-                jwttoken: localStorage.getItem("jwttoken"),
+        const header = {
                 'Access-Control-Allow-Origin': '*',
                 Accept: "application/json",
                 "Content-Type": "application/json;charset=UTF-8",
-            },
-            data: {
-                query: `query AddCustomer {
-                    customers {
-                        ${firstname}
-                        ${lastname}
-                        ${age}
-                        ${email}
-                        ${password}
-                    }
-                }`
             }
+        const query = `mutation CreateCustomer($firstname: String!, $lastname: String!, $age: Int!, $email: String!, $password: String!) {
+  CreateCustomer(firstname: $firstname, lastname: $lastname, age: $age, email: $email, password: $password) {
+    firstname
+    lastname
+    age
+    email
+    password
+  }
+}`
+
+        const variables = {
+            firstname: firstname,
+            lastname: lastname,
+            age: Number(age),
+            email: email,
+            password: password
+        }
+
+        const response = await fetch('http://localhost:3000/graphql', {
+            method: 'POST',
+            headers: header,    
+            body: JSON.stringify({
+                query: query,
+                variables: variables
+            })
         })
-        .then(data => {
-            if (data.data.errors) {
-                alert("An error occured");
-                return;
-            }
+
+        const result = await response.json();
+        if(result.errors) {
+            alert("An error happened", result.errors);
+            return;
+        }else {
             alert("Customer added");
             window.location.href = "#/customers";
-        })
-        .catch(error => {
-            console.log(error);
-            alert("An error occured");
-        })
+        }
     }
 
 
