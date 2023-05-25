@@ -4,98 +4,58 @@
     let errortext = "";
 
     async function handleSubmit() {
-        let username = document.getElementById("username").value;
-        let password = document.getElementById("password").value;
+        let usernameT = document.getElementById("username").value;
+        let passwordT = document.getElementById("password").value;
 
-        const query = `query Login($username: String!, $pass: String!) {
-                    Login(username: $username, pass: $pass) {
-                        admin_id
-                        email
-                        id
-                    }
-                }`
-
+        const query = `
+        mutation Mutation($username: String!, $pass: String!) {
+            Login(username: $username, pass: $pass) {
+                email
+                admin_id
+                username
+                is_superuser
+                jwttoken
+            }
+        }`;
         // Define the variables for the query
         const variables = {
-            username: username,
-            pass: password
+            username: usernameT,
+            pass: passwordT
         };
+        const header = {
+            'Access-Control-Allow-Origin': '*',
+            "Accept": "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+        }
+        
+        const response = await axios('http://localhost:3000/graphql', {
+            method: 'POST',
+            headers: header,
+            body: JSON.stringify({
+                query: query,
+                variables: variables
+            })
+        }).then((response) => {
+            if(response.error){
+                alert(response.error);
+            }else{
+                const result = response.json();
+                const { Login } = result.data;
+                console.log(result);
 
-        // Make the Axios call to the GraphQL endpoint
-        axios.post('http://localhost:3000/graphql', {
-        query: query,
-        variables: variables
-        })
-        .then((data) => {
-            if (data.error) {
-                alert(data.error);
-            } else {
-                console.log(data)
-                localStorage.setItem("jwttoken", data.jwttoken);
-                localStorage.setItem("admin_id", data.admin_id);
-                localStorage.setItem("username", data.username);
-                localStorage.setItem("email", data.email);
-                localStorage.setItem("is_superuser", data.is_superuser);
-                window.location.reload();
+                localStorage.setItem("jwttoken", Login.jwttoken);
+                localStorage.setItem("admin_id", Login.admin_id);
+                localStorage.setItem("username", Login.username);
+                localStorage.setItem("email", Login.email);
+                localStorage.setItem("is_superuser", Login.is_superuser);
                 window.location.href = "#/home";
+                window.location.reload();
             }
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.error("Error:", error);
             errortext = error;
         });
-
-
-
-
-
-
-
-
-
-
-        // await axios({
-        //     method: 'post',
-        //     url: 'https://dls-admin-backend.azurewebsites.net/auth/login',
-        //     headers: {
-        //         'Access-Control-Allow-Origin': '*',
-        //         Accept: "application/json",
-        //         "Content-Type": "application/json;charset=UTF-8",
-        //     },
-        //     data: {
-        //         query: `query Login($username: String!, $pass: String!) {
-        //             Login(username: $username, pass: $pass) {
-        //                 admin_id
-        //                 email
-        //                 id
-        //             }
-        //         }`,
-        //         variables: {
-        //             username: username,
-        //             pass: password
-        //         }
-        //     }
-        // })
-        // .then((data) => {
-        //     if (data.error) {
-        //         alert(data.error);
-        //     } else {
-        //         console.log(data.data.errors[0], data.data.errors[1]);
-        //         localStorage.setItem("jwttoken", data.data.jwttoken);
-        //         localStorage.setItem("admin_id", data.data.admin_id);
-        //         localStorage.setItem("username", data.data.username);
-        //         localStorage.setItem("email", data.data.email);
-        //         localStorage.setItem("is_superuser", data.data.is_superuser);
-        //         window.location.reload();
-        //         window.location.href = "#/home";
-        //     }
-        // })
-        // .catch((error) => {
-        //     console.error("Error:", error);
-        //     errortext = error;
-        // });
-    }
-        
+    } 
 </script>
 
 <main>
