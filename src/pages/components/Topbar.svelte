@@ -19,7 +19,7 @@
         <a href="#/admins">Admins</a>
     {/if}
 
-    {#if localStorage.getItem("token") !== null}
+    {#if localStorage.getItem("jwttoken") !== null}
         <a href="#/home" on:click={handleLogout}>Logout</a>
     {:else}
         <a href="#/login">Login</a>

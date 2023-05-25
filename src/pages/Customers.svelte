@@ -1,18 +1,34 @@
 <script>
-    import axios from 'axios';
 
     async function getCustomers() {
-        let customers = await axios
-        .get('https://customerbackend.azurewebsites.net/customers', {
-            headers: {
-                Authorization: "Bearer " + localStorage.getItem("jwttoken"),
-                'Access-Control-Allow-Origin': '*',
-                Accept: "application/json",
-                "Content-Type": "application/json;charset=UTF-8",
-            },
-        })
 
-        return customers.data;
+        const query = `
+        query GetCustomers {
+            GetCustomers {
+                first_name
+                last_name
+                age
+                email
+            }
+        }`;
+        // Define the variables for the query
+        const header = {
+            'Access-Control-Allow-Origin': '*',
+            "Accept": "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+        }
+        
+        const response = await fetch('http://localhost:3000/graphql', {
+            method: 'POST',
+            headers: header,
+            body: JSON.stringify({
+                query: query,
+            })
+        });
+
+        const result = await response.json();
+        
+        return result.data.GetCustomers;
     }
 
     let customers = getCustomers();
@@ -23,7 +39,7 @@
     
     <h3>List of customers</h3>
 
-    {#if localStorage.getItem("jswtoken") == null || localStorage.getItem("jswtoken") == undefined}
+    {#if localStorage.getItem("jwttoken") == null || localStorage.getItem("jwttoken") == undefined}
         <p>You are not logged in</p>
     {:else}
         <button>

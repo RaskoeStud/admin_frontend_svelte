@@ -1,11 +1,10 @@
 <script>
-    import axios from "axios";
 
     let errortext = "";
 
     async function handleSubmit() {
-        let usernameT = document.getElementById("username").value;
-        let passwordT = document.getElementById("password").value;
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
 
         const query = `
         mutation Mutation($username: String!, $pass: String!) {
@@ -19,8 +18,8 @@
         }`;
         // Define the variables for the query
         const variables = {
-            username: usernameT,
-            pass: passwordT
+            username: username,
+            pass: password
         };
         const header = {
             'Access-Control-Allow-Origin': '*',
@@ -28,33 +27,27 @@
             "Content-Type": "application/json;charset=UTF-8",
         }
         
-        const response = await axios('http://localhost:3000/graphql', {
+        const response = await fetch('http://localhost:3000/graphql', {
             method: 'POST',
             headers: header,
             body: JSON.stringify({
                 query: query,
                 variables: variables
             })
-        }).then((response) => {
-            if(response.error){
-                alert(response.error);
-            }else{
-                const result = response.json();
-                const { Login } = result.data;
-                console.log(result);
-
-                localStorage.setItem("jwttoken", Login.jwttoken);
-                localStorage.setItem("admin_id", Login.admin_id);
-                localStorage.setItem("username", Login.username);
-                localStorage.setItem("email", Login.email);
-                localStorage.setItem("is_superuser", Login.is_superuser);
-                window.location.href = "#/home";
-                window.location.reload();
-            }
-        }).catch((error) => {
-            console.error("Error:", error);
-            errortext = error;
         });
+
+        const result = await response.json();
+        const { Login } = result.data;
+        console.log(result);
+
+        localStorage.setItem("jwttoken", Login.jwttoken);
+        localStorage.setItem("admin_id", Login.admin_id);
+        localStorage.setItem("username", Login.username);
+        localStorage.setItem("email", Login.email);
+        localStorage.setItem("is_superuser", Login.is_superuser);
+        
+        window.location.href = "#/home";
+        window.location.reload();
     } 
 </script>
 
