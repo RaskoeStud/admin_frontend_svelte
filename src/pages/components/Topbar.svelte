@@ -52,7 +52,4 @@
     color: black;
     }
 
-    .login {
-        float: right;
-    }
 </style>
