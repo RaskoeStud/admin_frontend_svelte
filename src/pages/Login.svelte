@@ -27,7 +27,7 @@
             "Content-Type": "application/json;charset=UTF-8",
         }
         
-        const response = await fetch('http://localhost:3000/graphql', {
+        const response = await fetch('https://dls-admin-backend.azurewebsites.net/graphql', {
             method: 'POST',
             headers: header,
             body: JSON.stringify({
@@ -39,6 +39,10 @@
         const result = await response.json();
         const { Login } = result.data;
         console.log(result);
+        if (Login == null) {
+            errortext = "Wrong username or password";
+            return;
+        }
 
         localStorage.setItem("jwttoken", Login.jwttoken);
         localStorage.setItem("admin_id", Login.admin_id);
@@ -48,6 +52,10 @@
         
         window.location.href = "#/home";
         window.location.reload();
+        if(result.error)
+            {
+                errortext = result.error;
+            }
     } 
 </script>
 
