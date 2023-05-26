@@ -33,7 +33,9 @@
 
 <main>
 	<Topbar {Topbar}></Topbar>
-	<Router {routes} />
+	<body>
+		<Router {routes} />
+	</body>
 	<Footer {Footer}></Footer>
 </main>
 
@@ -42,6 +44,10 @@
 		text-align: center;
 		max-width: 240px;
 		margin: 0 auto;
+	}
+
+	body {
+		padding: 1.5rem;
 	}
 
 	@media (min-width: 640px) {
