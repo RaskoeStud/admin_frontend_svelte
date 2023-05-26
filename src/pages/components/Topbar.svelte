@@ -15,7 +15,7 @@
     <a href="#/home">Home</a>
     <a href="#/customers">Customers</a>
 
-    {#if localStorage.getItem("is_superuser") === 1}
+    {#if localStorage.getItem("is_superuser") == true}
         <a href="#/admins">Admins</a>
     {/if}
 
